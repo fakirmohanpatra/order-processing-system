@@ -61,6 +61,8 @@ services:
       context: ./OrderService
       dockerfile: Dockerfile
     container_name: order-service
+    environment:
+      - ASPNETCORE_URLS=http://+:80
     depends_on:
       - postgres
       - rabbitmq
@@ -76,6 +78,8 @@ services:
       context: ./PaymentService
       dockerfile: Dockerfile
     container_name: payment-service
+    environment:
+      - ASPNETCORE_URLS=http://+:80
     depends_on:
       - postgres
       - rabbitmq
@@ -91,6 +95,8 @@ services:
       context: ./NotificationService
       dockerfile: Dockerfile
     container_name: notification-service
+    environment:
+      - ASPNETCORE_URLS=http://+:80
     depends_on:
       - rabbitmq
     networks:
@@ -104,6 +110,8 @@ services:
       context: ./ApiGateway
       dockerfile: Dockerfile
     container_name: api-gateway
+    environment:
+      - ASPNETCORE_URLS=http://+:80
     depends_on:
       - order-service
       - payment-service

@@ -1,6 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Swagger (optional, useful for testing API Gateway itself)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -12,44 +11,35 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// For simplicity, disable HTTPS redirection (Nginx handles HTTPS)
 app.UseHttpsRedirection();
 
-// Create an HttpClient to forward requests
 var httpClient = new HttpClient();
 
-// Order Service Proxy
+app.MapGet("/health", () => Results.Ok("API Gateway is healthy!"));
+
 app.Map("/{**path}", async context =>
 {
     var requestPath = context.Request.Path.ToString();
-    var targetUri = "";
+    
+    string? targetUri = requestPath.StartsWith("/orders") ? $"http://order-service:80{requestPath}" :
+                        requestPath.StartsWith("/payments") ? $"http://payment-service:80{requestPath}" :
+                        requestPath.StartsWith("/notifications") ? $"http://notification-service:80{requestPath}" :
+                        null;
 
-    if (requestPath.StartsWith("/orders"))
-        targetUri = $"http://order-service:80{requestPath["/orders".Length..]}{context.Request.QueryString}";
-    else if (requestPath.StartsWith("/payments"))
-        targetUri = $"http://payment-service:80{requestPath["/payments".Length..]}{context.Request.QueryString}";
-    else if (requestPath.StartsWith("/notifications"))
-        targetUri = $"http://notification-service:80{requestPath["/notifications".Length..]}{context.Request.QueryString}";
-    else
+    if (targetUri == null)
     {
         context.Response.StatusCode = 404;
         await context.Response.WriteAsync("Service not found");
         return;
     }
 
-    var response = await httpClient.SendAsync(new HttpRequestMessage(
-        new HttpMethod(context.Request.Method),
-        targetUri
-    ));
+    var request = new HttpRequestMessage(new HttpMethod(context.Request.Method), targetUri + context.Request.QueryString);
+    if (context.Request.Body.CanRead && context.Request.ContentLength > 0)
+        request.Content = new StreamContent(context.Request.Body);
 
+    var response = await httpClient.SendAsync(request);
     context.Response.StatusCode = (int)response.StatusCode;
-    foreach (var header in response.Headers)
-        context.Response.Headers[header.Key] = header.Value.ToArray();
-
-    await context.Response.WriteAsync(await response.Content.ReadAsStringAsync());
+    await response.Content.CopyToAsync(context.Response.Body);
 });
-
-// Optional: Root endpoint to test API Gateway
-app.MapGet("/", () => "API Gateway is running...");
 
 app.Run();
