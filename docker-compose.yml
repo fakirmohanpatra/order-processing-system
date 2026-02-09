@@ -6,6 +6,7 @@ volumes:
   postgres-data:
   rabbitmq-data:
   grafana-data:
+  prometheus-data:
 
 services:
   # -----------------------------
@@ -22,6 +23,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ops_user -d orderdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - ops-network
 
@@ -63,10 +69,18 @@ services:
     container_name: order-service
     environment:
       - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
+    # 🔑 Connection strings
+      - ConnectionStrings__Postgres=Host=postgres;Port=5432;Database=orderdb;Username=ops_user;Password=ops_password
+      - ConnectionStrings__Redis=redis:6379
+      - ConnectionStrings__RabbitMQ=amqp://ops_user:ops_password@rabbitmq:5672/
     depends_on:
-      - postgres
-      - rabbitmq
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
     networks:
       - ops-network
 
@@ -80,6 +94,8 @@ services:
     container_name: payment-service
     environment:
       - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Postgres=Host=postgres;Port=5432;Database=orderdb;Username=ops_user;Password=ops_password
     depends_on:
       - postgres
       - rabbitmq
@@ -97,6 +113,7 @@ services:
     container_name: notification-service
     environment:
       - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - rabbitmq
     networks:
@@ -149,3 +166,18 @@ services:
       - grafana-data:/var/lib/grafana
     networks:
       - ops-network
+
+  # -----------------------------
+  # Prometheus
+  # -----------------------------
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - ops-network
+
