@@ -7,13 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- EF Core 8 + PostgreSQL provider -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
+
+    <!-- Health checks -->
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.RabbitMQ" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.HealthChecks" Version="2.2.0" />
+    <!-- OpenAPI / Swagger -->
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.23" />
-    <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+
+    <!-- Prometheus -->
+    <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
+
+    <!-- RabbitMQ client -->
+    <PackageReference Include="RabbitMQ.Client" Version="7.2.0" />
   </ItemGroup>
 
 </Project>
