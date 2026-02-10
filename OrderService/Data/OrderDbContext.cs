@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using OrderService.Models.RequestModels;
+using OrderService.Models.Entities;
 
 namespace OrderService.Data;
 public class OrderDbContext : DbContext
@@ -8,5 +8,5 @@ public class OrderDbContext : DbContext
     {
     }
 
-    public DbSet<OrderRequest> Orders { get; set; }
+    public DbSet<OrderEntity> Orders => Set<OrderEntity>();
 }

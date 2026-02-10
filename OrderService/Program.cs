@@ -1,3 +1,5 @@
+using OrderService.Repositories;
+using OrderService.Services;
 using Prometheus;
 using RabbitMQ.Client;
 
@@ -48,6 +50,9 @@ builder.Services.AddHealthChecks()
         name: "rabbitmq",
         timeout: TimeSpan.FromSeconds(5)
     );
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderManager, OrderManager>();
 
 // -----------------------------
 // Build App
