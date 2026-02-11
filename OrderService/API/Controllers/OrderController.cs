@@ -4,7 +4,7 @@ using OrderService.Models.RequestModels;
 using OrderService.Models.ResponseModels;
 using OrderService.Services;
 
-namespace OrderService.Controllers;
+namespace OrderService.API.Controllers;
 
 [ApiController]
 [Route("api/orders")]

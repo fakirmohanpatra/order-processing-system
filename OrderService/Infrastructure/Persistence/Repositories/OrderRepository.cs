@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OrderService.Data;
-using OrderService.Models.Entities;
+using OrderService.Domain.Entities;
 using OrderService.Models.RequestModels;
 
 namespace OrderService.Repositories;
