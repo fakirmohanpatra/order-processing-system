@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using OrderService.Data;
 using OrderService.Domain.Entities;
-using OrderService.Models.RequestModels;
 
-namespace OrderService.Repositories;
+namespace OrderService.Infrastructure.Repositories;
 
 public class OrderRepository : IOrderRepository
 {
@@ -15,20 +14,10 @@ public class OrderRepository : IOrderRepository
     }
 
     public async Task AddAsync(
-        OrderRequest order, 
+        OrderEntity order,
         CancellationToken cancellationToken)
     {
-        var entity = new OrderEntity
-        {
-            Id = Guid.NewGuid(),
-            ProductName = order.ProductName,
-            Quantity = order.Quantity,
-            Price = order.Price,
-            CustomerId = order.CustomerId,
-            Status = "Created"
-        };
-
-        _context.Orders.Add(entity);
+        _context.Orders.Add(order);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
@@ -37,8 +26,8 @@ public class OrderRepository : IOrderRepository
         CancellationToken cancellationToken)
     {
         return await _context.Orders
-        .AsNoTracking()
-        .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+            .AsNoTracking()
+            .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
 }
 
