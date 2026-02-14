@@ -3,6 +3,11 @@ using OrderService.Application.Extensions;
 using OrderService.Infrastructure.Extensions;
 using OrderService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Prometheus;
+using OpenTelemetry;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +22,18 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Register MediatR handlers from Application assembly
 builder.Services.AddMediatR(typeof(OrderService.Application.Commands.CreateOrder.CreateOrderCommand).Assembly);
+
+// OpenTelemetry tracing (Jaeger) via direct TracerProvider builder
+Sdk.CreateTracerProviderBuilder()
+    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("order-service"))
+    .AddAspNetCoreInstrumentation()
+    .AddHttpClientInstrumentation()
+    .AddJaegerExporter(options =>
+    {
+        options.AgentHost = builder.Configuration.GetValue("Jaeger:Host", "jaeger");
+        options.AgentPort = builder.Configuration.GetValue("Jaeger:Port", 6831);
+    })
+    .Build();
 
 var app = builder.Build();
 
@@ -35,6 +52,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+// Prometheus metrics endpoints
+app.UseHttpMetrics();
+app.UseMetricServer();
 app.MapControllers();
 
 app.Run();

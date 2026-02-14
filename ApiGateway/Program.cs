@@ -20,7 +20,7 @@ app.MapGet("/health", () => Results.Ok("API Gateway is healthy!"));
 app.Map("/{**path}", async context =>
 {
     var requestPath = context.Request.Path.ToString();
-    
+
     string? targetUri = requestPath.StartsWith("/orders") ? $"http://order-service:80{requestPath}" :
                         requestPath.StartsWith("/payments") ? $"http://payment-service:80{requestPath}" :
                         requestPath.StartsWith("/notifications") ? $"http://notification-service:80{requestPath}" :

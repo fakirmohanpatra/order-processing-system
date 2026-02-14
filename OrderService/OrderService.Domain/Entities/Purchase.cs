@@ -13,7 +13,7 @@ public class Purchase
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
     // Private constructor for EF
-    private Purchase() {}
+    private Purchase() { }
 
     private Purchase(
         string productName,
@@ -42,7 +42,7 @@ public class Purchase
 
         if (Quantity <= 0)
             throw new ArgumentException("Quantity must be greater than zero");
-        
+
         if (Price <= 0)
             throw new ArgumentException("Price must be greater than zero");
 

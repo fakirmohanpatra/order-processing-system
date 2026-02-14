@@ -14,9 +14,9 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         // Configure Database Context for PostgreSQL
-        var connectionString = configuration.GetConnectionString("DefaultConnection") 
-            ?? "Host=localhost;Port=5432;Database=orderdb;Username=ops_user;Password=ops_password;";
-        
+        var connectionString = configuration.GetConnectionString("Postgres")
+            ?? throw new InvalidOperationException("Postgres connection string not found!");
+
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connectionString));
 
