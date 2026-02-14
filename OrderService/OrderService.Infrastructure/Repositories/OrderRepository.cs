@@ -1,31 +1,32 @@
 using Microsoft.EntityFrameworkCore;
-using OrderService.Data;
+using OrderService.Domain.Interfaces;
 using OrderService.Domain.Entities;
+using OrderService.Infrastructure.Persistence;
 
 namespace OrderService.Infrastructure.Repositories;
 
 public class OrderRepository : IOrderRepository
 {
-    private readonly OrderDbContext _context;
+    private readonly AppDbContext _context;
 
-    public OrderRepository(OrderDbContext context)
+    public OrderRepository(AppDbContext context)
     {
         _context = context;
     }
 
     public async Task AddAsync(
-        OrderEntity order,
+        Purchase order,
         CancellationToken cancellationToken)
     {
-        _context.Orders.Add(order);
+        _context.Purchases.Add(order);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<OrderEntity?> GetOrderByIdAsync(
+    public async Task<Purchase?> GetOrderByIdAsync(
         Guid id,
         CancellationToken cancellationToken)
     {
-        return await _context.Orders
+        return await _context.Purchases
             .AsNoTracking()
             .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }

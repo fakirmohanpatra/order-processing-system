@@ -1,4 +1,4 @@
-namespace OrderService.Models.RequestModels;
+namespace OrderService.Application.Models.RequestModels;
 
 public class OrderRequest
 {

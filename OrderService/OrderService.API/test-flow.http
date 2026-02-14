@@ -1,0 +1,13 @@
+@api = http://localhost:5001
+@contentType = application/json
+
+### Create a Purchase
+POST {{api}}/api/orders
+Content-Type: {{contentType}}
+
+{
+  "productName": "Laptop",
+  "quantity": 1,
+  "price": 999.99,
+  "customerId": "CUST-001"
+}

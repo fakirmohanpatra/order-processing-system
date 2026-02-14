@@ -1,4 +1,4 @@
-namespace OrderService.Models.ResponseModels;
+namespace OrderService.Application.Models.ResponseModels;
 
 public class OrderResponse
 {

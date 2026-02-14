@@ -2,21 +2,36 @@ using OrderService.Domain.Enums;
 
 namespace OrderService.Domain.Entities;
 
-public class OrderEntity
+public class Purchase
 {
     public Guid Id { get; private set; }
     public string ProductName { get; private set; } = default!;
     public int Quantity { get; private set; }
-    public decimal Price { get; private set; }
+    public decimal UnitPrice { get; private set; }
     public string CustomerId { get; private set; } = default!;
-    public OrderStatus Status { get; private set; }
+    public PurchaseStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
     // Private constructor for EF
-    private OrderEntity() {}
+    private Purchase() {}
+
+    private Purchase(
+        string productName,
+        int quantity,
+        decimal unitPrice,
+        string customerId)
+    {
+        Id = Guid.NewGuid();
+        ProductName = productName;
+        Quantity = quantity;
+        UnitPrice = unitPrice;
+        CustomerId = customerId;
+        Status = PurchaseStatus.Created;
+        CreatedAt = DateTime.UtcNow;
+    }
 
     // Factory method
-    public static OrderEntity Create(
+    public static Purchase Create(
         string ProductName,
         int Quantity,
         decimal Price,
@@ -31,31 +46,35 @@ public class OrderEntity
         if (Price <= 0)
             throw new ArgumentException("Price must be greater than zero");
 
-        return new OrderEntity
+        return new Purchase
         {
             Id = Guid.NewGuid(),
             ProductName = ProductName,
             Quantity = Quantity,
-            Price = Price,
+            UnitPrice = Price,
             CustomerId = CustomerId,
-            Status = OrderStatus.Created,
+            Status = PurchaseStatus.Created,
             CreatedAt = DateTime.UtcNow
         };
     }
 
+    public decimal GetTotalAmount()
+    {
+        return Quantity * UnitPrice;
+    }
     public void MarkAsPaid()
     {
-        if (Status != OrderStatus.Created)
+        if (Status != PurchaseStatus.Created)
             throw new InvalidOperationException("Order can not be paid in current state");
 
-        Status = OrderStatus.Paid;
+        Status = PurchaseStatus.Paid;
     }
 
     public void Cancel()
     {
-        if (Status == OrderStatus.Paid)
+        if (Status == PurchaseStatus.Paid)
             throw new InvalidOperationException("Paid order cannot be cancelled");
 
-        Status = OrderStatus.Cancelled;
+        Status = PurchaseStatus.Cancelled;
     }
 }

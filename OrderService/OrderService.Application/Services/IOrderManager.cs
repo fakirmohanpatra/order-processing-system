@@ -1,7 +1,7 @@
-using OrderService.Models.RequestModels;
-using OrderService.Models.ResponseModels;
+using OrderService.Application.Models.RequestModels;
+using OrderService.Application.Models.ResponseModels;
 
-namespace OrderService.Services;
+namespace OrderService.Application.Services;
 
 public interface IOrderManager
 {
