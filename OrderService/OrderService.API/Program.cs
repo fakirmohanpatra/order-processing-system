@@ -30,7 +30,13 @@ Sdk.CreateTracerProviderBuilder()
     .AddHttpClientInstrumentation()
     .AddJaegerExporter(options =>
     {
-        options.AgentHost = builder.Configuration.GetValue("Jaeger:Host", "jaeger");
+        // prefer explicit config; if unset, use localhost for Development, otherwise use 'jaeger' (Docker)
+        var configuredHost = builder.Configuration.GetValue<string>("Jaeger:Host");
+        var agentHost = !string.IsNullOrEmpty(configuredHost)
+            ? configuredHost
+            : (builder.Environment.IsDevelopment() ? "localhost" : "jaeger");
+
+        options.AgentHost = agentHost;
         options.AgentPort = builder.Configuration.GetValue("Jaeger:Port", 6831);
     })
     .Build();
