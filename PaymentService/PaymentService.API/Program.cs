@@ -23,7 +23,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
+    var forecast =  Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -36,7 +36,6 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-app.MapGet("/health", () => Results.Ok("Payment Service is healthy!"));
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
