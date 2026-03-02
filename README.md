@@ -23,13 +23,13 @@ A production-grade backend system built using ASP.NET Core, showcasing event-dri
                  │
                  ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ Nginx (Port 8080) - Reverse Proxy                              │
+│ Nginx (Port 8080) - Reverse Proxy                               │
 └────────────────┬────────────────────────────────────────────────┘
                  │
                  ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │ API Gateway (Port 5004)                                         │
-│ Routes: /orders → Order Service | /payments → Payment Service  │
+│ Routes: /orders → Order Service | /payments → Payment Service   │
 └────────────────┬────────────────────────────────────────────────┘
                  │
         ┌────────┴────────┬──────────────┐

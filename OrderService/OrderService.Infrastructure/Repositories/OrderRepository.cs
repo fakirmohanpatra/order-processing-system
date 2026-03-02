@@ -30,5 +30,13 @@ public class OrderRepository : IOrderRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
-}
 
+    public async Task<IEnumerable<Purchase>> GetAllOrdersAsync(
+        CancellationToken cancellationToken)
+    {
+        return await _context.Purchases
+            .AsNoTracking()
+            .OrderByDescending(o => o.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+}

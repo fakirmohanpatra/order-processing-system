@@ -20,7 +20,7 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, IEnum
         return [.. orders.Select(o => new OrderResponse
         {
             Id = o.Id,
-            Status = o.Status,
+            Status = o.Status.ToString(),
             CreatedAt = o.CreatedAt
         })];
     }

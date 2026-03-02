@@ -1,3 +1,5 @@
+using OrderService.Domain.Entities;
+
 namespace OrderService.Domain.Interfaces;
 
 public interface ICustomerRepository
